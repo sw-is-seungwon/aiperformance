@@ -1,22 +1,13 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="description" content="인공지능 기초 수행평가 참고 자료: 회귀, 분류, 군집 코드 모음"><title>[지속가능발전목표 프로젝트] 참고 자료</title><style>
 :root{--ink:#24314d;--muted:#71809a;--line:#e8edf6;--white:#fff;--bg:#f8faff;--accent:#6378db;--accent-light:#edf0ff;--shadow:0 12px 35px rgba(61,83,132,.07)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font-family: "Pretendard", "SUIT", "Apple SD Gothic Neo", "Malgun Gothic",system-ui,sans-serif;background:radial-gradient(circle at 6% 12%,#eaf1ff 0,transparent 24%),radial-gradient(circle at 97% 6%,#fff0f7 0,transparent 24%),#fafbff;line-height:1.6}button{font:inherit}.site{max-width:1020px;margin:0 auto;padding:0 22px 100px}.hero{position:relative;overflow:hidden;margin:30px 0 23px;padding:39px 43px 36px;border-radius:30px;border:1px solid #e9eafe;background:linear-gradient(120deg,#e7edff 0%,#f6f0ff 51%,#fff0f5 100%);box-shadow:var(--shadow)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;background:#fff9;border:1px solid #ffffffdf;border-radius:99px;color:#6876b6;font-size:12px;letter-spacing:.06em;font-weight:800}.eyebrow i{width:7px;height:7px;border-radius:50%;background:#8f91eb}.hero h1{font-size:clamp(27px,3.6vw,39px);letter-spacing:-.055em;line-height:1.3;margin:17px 0 11px}.hero p{margin:0;max-width:550px;font-size:14px;color:#667690;line-height:1.8}.hero-art{position:absolute;right:58px;top:36px;width:160px;height:150px;transform:rotate(-8deg);opacity:.83}.art-square{position:absolute;border-radius:18px;background:#ffffffb8;box-shadow:0 10px 22px #7585b324;border:1px solid #fff}.art-back{width:103px;height:112px;top:0;right:0;transform:rotate(15deg)}.art-front{width:108px;height:117px;top:25px;right:37px;padding:18px}.art-line{height:9px;border-radius:6px;margin-bottom:11px;background:#cbd6fb}.art-line:nth-child(2){width:69%;background:#e6c9e6}.art-line:nth-child(3){width:83%;background:#b9e7dd}.art-line:nth-child(4){width:58%;background:#cbd6fb}.art-dots{position:absolute;right:4px;top:18px;color:#b6a5e4;font-size:28px}.nav-wrap{position:sticky;top:0;z-index:5;background:#fafbffeb;backdrop-filter:blur(12px);padding:13px 0 12px}.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tab{cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #e4e9f4;border-radius:17px;padding:13px 12px;background:#fff;color:#687790;font-weight:800;font-size:16px;box-shadow:0 4px 14px #50648b07;transition:background .16s,transform .16s,border-color .16s}.tab:hover{transform:translateY(-1px);border-color:#ccd3f2}.tab[aria-selected=true]{color:#fff;background:#7286df;border-color:#7286df;box-shadow:0 7px 19px #7286df42}.tab[data-tab=cls][aria-selected=true]{background:#46af9c;border-color:#46af9c;box-shadow:0 7px 19px #46af9c36}.tab[data-tab=clu][aria-selected=true]{background:#b484cb;border-color:#b484cb;box-shadow:0 7px 19px #b484cb38}.tab:focus-visible{outline:3px solid #a8b9ff;outline-offset:3px}.tab-icon{width:28px;height:28px;display:inline-grid;place-items:center;border-radius:10px;font-size:14px;background:#eff2ff;color:#7e8ee1}.tab[aria-selected=true] .tab-icon{background:#ffffff35;color:#fff}.panel[hidden]{display:none!important}.section-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:17px 3px 18px}.section-title{display:flex;align-items:center;gap:10px}.section-title h2{font-size:20px;letter-spacing:-.04em;margin:0}.section-title p{margin:0;font-size:13px;color:var(--muted)}.count{background:#fff;border:1px solid #e5eaf4;border-radius:99px;color:#7a86a0;padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap}.example{background:#fff;border:1px solid #e9ecf5;border-radius:24px;box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}.example-top{padding:26px 29px 22px;background:linear-gradient(96deg,#fff,#f9faff);border-bottom:1px solid #eef1f7}.topic-number{display:inline-grid;place-items:center;width:33px;height:33px;background:#edf1ff;color:#7181db;border-radius:12px;font-weight:900;font-size:13px;margin-right:8px}.category-cls .topic-number{background:#e5f8f2;color:#4baa95}.category-clu .topic-number{background:#f6eafd;color:#aa7fc1}.chip{display:inline-block;border:1px solid #e4e9fb;background:#f3f5ff;color:#6c7bd0;border-radius:100px;padding:4px 11px;font-size:12px;font-weight:800}.category-cls .chip{color:#389784;border-color:#d8f1e8;background:#f0fbf7}.category-clu .chip{color:#9f6db7;border-color:#f0e1f6;background:#fcf4ff}.example-top h3{font-size:22px;line-height:1.35;margin:13px 0 7px;letter-spacing:-.045em}.desc{margin:0;color:#78859b;font-size:14px}.steps{padding:9px 29px 21px}.step{position:relative;padding:17px 0 9px 20px;border-left:2px solid #edf0f8;margin-left:9px}.step:before{content:'';position:absolute;left:-6px;top:24px;width:10px;height:10px;border-radius:50%;background:#adbaef;box-shadow:0 0 0 4px #f0f3ff}.category-cls .step:before{background:#91d7c3;box-shadow:0 0 0 4px #ecf9f4}.category-clu .step:before{background:#d3b2e2;box-shadow:0 0 0 4px #fbf0ff}.step:last-of-type{border-left-color:transparent}.step-head{display:flex;align-items:center;gap:10px;margin:0 0 11px}.step-index{font-size:11px;color:#9aa7bd;font-weight:900;letter-spacing:.08em}.step h4{margin:0;font-size:15px;color:#3d4b66;letter-spacing:-.025em}.codebox{position:relative;background:#f8f9fd;border:1px solid #e9edf5;border-radius:14px;overflow-x:auto}.codebox pre{margin:0;padding:17px 20px;color:#34435c;font-size:12.8px;line-height:1.8;font-family:Consolas,"D2Coding","Noto Sans Mono","Liberation Mono",monospace;tab-size:4;white-space:pre;user-select:text}.codebox .c1,.codebox .cm{color:#8294a9;font-style:italic}.codebox .kn,.codebox .k,.codebox .ow,.codebox .kd{color:#8a63b3;font-weight:600}.codebox .s,.codebox .s1,.codebox .s2,.codebox .sa,.codebox .si{color:#b66f88}.codebox .mi,.codebox .mf{color:#3f94a7}.codebox .nf,.codebox .nb{color:#477cc3}.codebox .n{color:#34435c}.codebox .o{color:#7284a1}.tip{margin:18px 0 1px;padding:13px 15px;border-radius:12px;background:#f7f9ff;border:1px solid #e8eefb;color:#68758d;font-size:12.5px}.tip strong{color:#7c8bcc}.meta{font-size:11px;color:#a2acc0;margin-top:14px;overflow-wrap:anywhere}.footer{text-align:center;margin-top:31px;color:#a1abc1;font-size:12px}.footer:before{content:'✦';margin-right:7px;color:#b2b9e9}@media(max-width:700px){.site{padding:0 13px 65px}.hero{margin-top:12px;padding:28px 23px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:27px}.hero p{font-size:13px}.tab{font-size:15px;padding:12px 7px;gap:6px}.tabs{gap:7px}.tab-icon{width:22px;height:22px;border-radius:7px}.example{border-radius:19px;margin-bottom:16px}.example-top{padding:20px 19px}.example-top h3{font-size:20px}.steps{padding:6px 15px 16px}.step{padding-left:13px}.codebox pre{font-size:12px;padding:13px}.section-title h2{font-size:18px}.section-title p{font-size:12px}}
-</style>/* 코드 영역 드래그 선택 방지 */
-pre, pre *, code, code * {
-    -webkit-user-select: none;
-    user-select: none;
-}</head><script>
-document.addEventListener("copy", function(e) {
-    if (e.target.closest("pre, code")) {
-        e.preventDefault();
-    }
-});
 
-document.querySelectorAll("pre, code").forEach(function(el) {
-    el.addEventListener("contextmenu", function(e) {
-        e.preventDefault();
-    });
-});
-</script><body><div class="site">
+/* 코드 영역 드래그 및 선택 방지 */
+.codebox, .codebox * {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+}
+</style></head><body><div class="site">
 <header class="hero"><span class="eyebrow"><i></i> ARTIFICIAL INTELLIGENCE · CODE LIBRARY</span><h1>인공지능 모델 구현<br>참고 자료 <span aria-hidden="true">✦</span></h1><p>수행평가에서 필요한 코드를 찾아 활용해보세요.<br>회귀, 분류, 군집의 구현 코드가 제공됩니다.</p><div class="hero-art" aria-hidden="true"><div class="art-square art-back"></div><div class="art-square art-front"><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div></div><div class="art-dots">✦</div></div></header>
 <nav class="nav-wrap" aria-label="모델 카테고리"><div class="tabs" role="tablist">
 <button type="button" role="tab" class="tab" id="tab-reg" aria-controls="panel-reg" aria-selected="true" tabindex="0" data-tab="reg"><span class="tab-icon" aria-hidden="true">↗</span>회귀</button>
@@ -341,4 +332,45 @@ document.querySelectorAll("pre, code").forEach(function(el) {
 const tabs=[...document.querySelectorAll('[role="tab"]')];
 function activate(key){for(const t of tabs){const chosen=t.dataset.tab===key;t.setAttribute('aria-selected',String(chosen));t.tabIndex=chosen?0:-1;document.getElementById('panel-'+t.dataset.tab).hidden=!chosen;}}
 for(const t of tabs){t.addEventListener('click',()=>activate(t.dataset.tab));t.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const i=tabs.indexOf(t);const next=e.key==='Home'?0:e.key==='End'?tabs.length-1:e.key==='ArrowRight'?(i+1)%tabs.length:(i-1+tabs.length)%tabs.length;activate(tabs[next].dataset.tab);tabs[next].focus();});}
-</script></body></html>
+</script>
+<script>
+// 코드 영역의 복사 및 우클릭 방지
+function selectedCode() {
+    const sel = window.getSelection();
+
+    if (!sel || sel.isCollapsed) return false;
+
+    const inCode = node => {
+        const el = node?.nodeType === Node.ELEMENT_NODE
+            ? node
+            : node?.parentElement;
+
+        return !!el?.closest?.('.codebox');
+    };
+
+    return inCode(sel.anchorNode) ||
+           inCode(sel.focusNode);
+}
+
+// 복사 방지
+document.addEventListener('copy', e => {
+    if (selectedCode() || e.target.closest?.('.codebox')) {
+        e.preventDefault();
+    }
+});
+
+// 잘라내기 방지
+document.addEventListener('cut', e => {
+    if (selectedCode() || e.target.closest?.('.codebox')) {
+        e.preventDefault();
+    }
+});
+
+// 코드 영역 우클릭 방지
+document.addEventListener('contextmenu', e => {
+    if (e.target.closest?.('.codebox')) {
+        e.preventDefault();
+    }
+});
+</script>
+</body></html>
