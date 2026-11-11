@@ -1,650 +1,443 @@
-<!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>인공지능 모델 구현 참고 자료</title><style>
-:root{color-scheme:light;--bg:#f7f9fc;--paper:#fff;--ink:#202d40;--muted:#66758b;--line:#e3e9f1;--blue:#4970d9;--soft:#eaf0ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);line-height:1.65}header{background:linear-gradient(118deg,#e9f2ff,#f3edff);border-bottom:1px solid #dfe7f6;padding:47px 20px 34px;text-align:center}header h1{font-size:clamp(25px,4vw,36px);margin:0 0 8px;letter-spacing:-.04em}header p{color:#586982;margin:0;font-size:15px}.container{max-width:960px;margin:0 auto;padding:26px 20px 70px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 24px}.tab{border:1px solid #d5dfef;background:#fff;border-radius:14px;padding:14px 10px;font-size:17px;font-weight:750;color:#52617b;cursor:pointer;font-family:inherit}.tab[aria-selected="true"]{background:#496bd2;color:#fff;border-color:#496bd2;box-shadow:0 5px 13px #375ac025}.tab:focus-visible{outline:3px solid #a6b8ff;outline-offset:3px}.intro{margin:7px 0 22px;color:var(--muted);font-size:14px}.panel[hidden]{display:none!important}.example{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;margin-bottom:20px;box-shadow:0 3px 16px #202b4010}.example-head{padding:23px 25px 17px;border-bottom:1px solid var(--line)}.example-head h2{margin:5px 0 7px;font-size:21px;letter-spacing:-.02em}.example-head p{font-size:14px;color:var(--muted);margin:0}.chip{display:inline-block;padding:3px 9px;border-radius:18px;background:#eef2ff;color:#445ead;font-size:12px;font-weight:700}.steps{padding:2px 24px 20px}.step{margin-top:21px}.step h3{font-size:15px;margin:0 0 9px;color:#34445e}.source{font-size:12px;color:#8290a4;margin-top:12px;overflow-wrap:anywhere}.notice{background:#f6f8fc;border-left:3px solid #a7b6df;padding:11px 13px;font-size:13px;color:#53647c;margin:16px 0 0;border-radius:0 7px 7px 0}.codebox{border:1px solid #e2e7ef;background:#f8fafd;border-radius:10px;overflow-x:auto}.codebox pre{margin:0;padding:17px 18px;color:#28354d;font-size:13px;line-height:1.65;white-space:pre;tab-size:4;font-family:Consolas,"D2Coding","Liberation Mono",monospace;user-select:text}.footer{text-align:center;color:#8993a3;font-size:12px;padding:16px} @media(max-width:600px){header{padding:35px 15px 26px}.container{padding:17px 12px 48px}.tabs{gap:7px}.tab{font-size:15px;padding:12px 2px}.example-head{padding:18px 16px 14px}.steps{padding:2px 13px 16px}.codebox pre{font-size:12px;padding:13px}.example-head h2{font-size:19px}}
-</style></head><body>
-<header><h1>인공지능 모델 구현 참고 자료</h1><p>인공지능 기초 · 수행평가 참고용 코드</p></header>
-<main class="container"><nav class="tabs" aria-label="모델 카테고리" role="tablist">
-<button type="button" role="tab" class="tab" id="tab-reg" aria-controls="panel-reg" aria-selected="true" tabindex="0" data-tab="reg">회귀</button>
-<button type="button" role="tab" class="tab" id="tab-cls" aria-controls="panel-cls" aria-selected="false" tabindex="-1" data-tab="cls">분류</button>
-<button type="button" role="tab" class="tab" id="tab-clu" aria-controls="panel-clu" aria-selected="false" tabindex="-1" data-tab="clu">군집</button>
-</nav>
-<section class="panel" id="panel-reg" role="tabpanel" aria-labelledby="tab-reg" ><p class="intro">회귀 모델 구현 예제 · 아래 코드들은 각 예제 안에서 위에서 아래 순서로 확인하세요.</p>
-<article class="example"><div class="example-head"><span class="chip">선형 회귀 · X_train 사용</span><h2>펭귄 부리 길이 예측</h2><p>펭귄 데이터의 특성을 이용해 부리 길이를 예측합니다.</p><div class="source">출처: 05_회귀_모델_구현_205.ipynb</div></div><div class="steps">
-<div class="step"><h3>① 데이터 불러오기 및 X, y 설정</h3><div class="codebox"><pre><code># 데이터를 불러와 봅시다.
-import pandas as pd
-df = pd.read_csv(&quot;펭귄_데이터(처리전).csv&quot;)
-
-df
-
-# 펭귄의 키와 날개길이, 몸무게를 활용하여 부리길이를 예측하도록 변수를 설정해 봅시다.
-
-# 독립 변수
-X = df [[&#x27;키_m&#x27;, &#x27;날개길이_cm&#x27;, &#x27;몸무게_kg&#x27;]]
-
-# 종속 변수
-y = df[&#x27;부리길이_cm&#x27;]</code></pre></div></div>
-<div class="step"><h3>② 정규화</h3><div class="codebox"><pre><code># 정규화를 진행해 봅시다.
-
-# 정규화에 필요한 기능 불러오기
-from sklearn.preprocessing import MinMaxScaler
-
-# X 데이터를 배열 형태로 변환
-data_array = X.values
-
-# 최소-최대 정규화 방법을 사용할 틀 제작
-scaler = MinMaxScaler()
-
-# X 데이터를 0~1 사이의 값으로 정규화한 값을 변수에 저장
-normalized_data = scaler.fit_transform(data_array)
-
-# 정규화한 데이터를 다시 데이터 프레임으로 변환(기존 X의 열 이름을 그대로 사용)
-X = pd.DataFrame(normalized_data, columns = X.columns)
-
-X</code></pre></div></div>
-<div class="step"><h3>③ 훈련·테스트 데이터 분리</h3><div class="codebox"><pre><code># 테스트 나누기에 필요한 기능 불러오기
-from sklearn.model_selection import train_test_split
-
-# 아래에 코드를 채워 봅시다.
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.3, # 60개의 데이터가 있을 때 테스트 데이터 18개
-    random_state=42
-)
-
-len(X_test)</code></pre></div></div>
-<div class="step"><h3>④ 모델 생성 및 학습</h3><div class="codebox"><pre><code># 선형회귀 모델을 생성하고, 학습을 진행하는 코드를 작성해 봅시다.
-
-# 선형 회귀 모델 생성에 필요한 기능 불러오기
-from sklearn.linear_model import LinearRegression
-
-# 아래에 코드를 채워 봅시다.
-# 선형회귀 알고리즘으로 틀을 만듦
-linear_model = LinearRegression()
-
-# 훈련 데이터를 통해서 실제 인공지능 모델을 학습시킴.
-linear_model.fit(X_train, y_train)</code></pre></div></div>
-<div class="step"><h3>⑤ 예측 및 성능 평가</h3><div class="codebox"><pre><code># 모델을 이용하여 예측 결과를 출력하는 코드를 작성해 봅시다.
-
-linear_predict = linear_model.predict(X_test)
-
-linear_predict # 저장한 예측 결과 출력하기
-
-# 모델의 성능을 판단하는 함수 불러오기
-from sklearn.metrics import r2_score
-
-# 실제값과 예측값을 비교하여 결정 계수 구하기
-r2_score(y_test, linear_predict)</code></pre></div></div>
-<div class="step"><h3>⑥ 시각화</h3><div class="codebox"><pre><code># 그래프의 한글 글꼴이 깨지지 않도록 설치
-!pip install koreanize-matplotlib  # !pip은 설치 기능을 뜻함!
-import koreanize_matplotlib
-
-# 결정계수 그래프 그리기
-import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
-
-# 결정계수 계산
-r2 = r2_score(y_test, linear_predict)
-
-# 실제값과 예측값 산점도
-plt.scatter(y_test, linear_predict)
-
-# 완벽하게 예측했을 때의 기준선
-plt.plot(
-    [y_test.min(), y_test.max()],
-    [y_test.min(), y_test.max()]
-)
-
-plt.xlabel(&quot;실제값&quot;)
-plt.ylabel(&quot;예측값&quot;)
-plt.title(f&quot;실제값과 예측값 비교 (R² = {r2:.2f})&quot;)
-
-plt.show()</code></pre></div></div>
-<p class="notice">원본 수업 코드에서는 데이터 분리 전에 전체 X를 정규화합니다. 별도 테스트 성능을 엄밀히 평가할 때는 훈련 데이터에만 정규화 기준을 학습시키는 것이 좋습니다.</p>
-</div></article>
-<article class="example"><div class="example-head"><span class="chip">선형 회귀 · X 전체 사용</span><h2>최저시급 예측</h2><p>연도와 최저시급 데이터를 사용하며 훈련·테스트 데이터를 나누지 않습니다.</p><div class="source">출처: 회귀 - 미래의 최저시급은 얼마일까__206.ipynb</div></div><div class="steps">
-<div class="step"><h3>① CSV 업로드 및 데이터 불러오기</h3><div class="codebox"><pre><code># ① CSV 업로드 (코랩에서 실행)
-from google.colab import files
-uploaded = files.upload()  # 내가 만든 CSV 파일 선택
-
-# ② 데이터 불러오기
-import pandas as pd
-
-file_name = next(iter(uploaded))  # 업로드한 파일 이름
-df = pd.read_csv(file_name, encoding=&#x27;utf-8&#x27;) # 파일 읽기~
-df
-
-# ③ 데이터 확인: 열 이름 / 데이터 개수 / 결측치
-display(df)
-print(&#x27;열 이름:&#x27;, df.columns.tolist())
-print(&#x27;자료 개수:&#x27;, len(df))
-print(&#x27;결측치 개수:&#x27;)
-print(df.isna().sum())
-
-# 열 이름이 &#x27;연도&#x27;, &#x27;최저시급&#x27;인지 확인하기!
-assert {&#x27;연도&#x27;, &#x27;최저시급&#x27;}.issubset(df.columns), &#x27;CSV 열 이름을 확인하세요.&#x27;
-# 숫자 자료로 변환
-df[&#x27;연도&#x27;] = pd.to_numeric(df[&#x27;연도&#x27;])
-df[&#x27;최저시급&#x27;] = pd.to_numeric(df[&#x27;최저시급&#x27;])</code></pre></div></div>
-<div class="step"><h3>② X, y 설정</h3><div class="codebox"><pre><code># ① 독립 변수(X)와 종속 변수(y) 설정하기
-
-# 빈칸을 채워보세요!
-X = df[[&#x27;연도&#x27;]] # 데이터 프레임으로 만들어야 하기 때문에 대괄호 2개
-y = df[&#x27;최저시급&#x27;]
-
-print(X.shape)
-print(y.shape)</code></pre></div></div>
-<div class="step"><h3>③ 모델 생성 및 학습</h3><div class="codebox"><pre><code># ② 선형회귀 모델 생성과 학습
-from sklearn.linear_model import LinearRegression
-
-model = LinearRegression()
-model.fit(X, y)
-
-print(&#x27;기울기:&#x27;, model.coef_[0])
-print(&#x27;절편:&#x27;, model.intercept_)</code></pre></div></div>
-<div class="step"><h3>④ 특정 연도 예측</h3><div class="codebox"><pre><code># 예측할 연도를 설정합니다.
-# X는 열 하나를 가진 2차원 입력이어야 합니다.
-import pandas as pd
-
-year = 2028
-predictions = model.predict(pd.DataFrame({&#x27;연도&#x27;: [year]}))
-print(f&#x27;{year}년 예측 최저시급:&#x27;, predictions[0])</code></pre></div></div>
-<div class="step"><h3>⑤ 선형 회귀 시각화</h3><div class="codebox"><pre><code># 생성형 AI가 작성한 시각화 코드를 붙여넣어 봅시다.
-import numpy as np
-import matplotlib.pyplot as plt
-
-# 1. 실제 데이터
-X_actual = df[&#x27;연도&#x27;].values
-y_actual = df[&#x27;최저시급&#x27;].values
-
-# 2. 회귀 직선을 그리기 위한 연도 범위
-years = np.linspace(X_actual.min(), 2028, 200).reshape(-1, 1)
-
-# 3. 학습된 모델로 예측값 계산
-y_pred_line = model.predict(years)
-
-# 4. 2026년, 2028년 예측값
-future_years = np.array([[2026], [2028]])
-future_predictions = model.predict(future_years)
-
-# 5. 실제 데이터 각 연도의 예측값 (잔차 계산용)
-y_pred_actual = model.predict(df[[&#x27;연도&#x27;]])
-
-# 6. 그래프 크기 설정
-plt.figure(figsize=(12, 7))
-
-# 실제 최저시급: 산점도
-plt.scatter(
-    X_actual,
-    y_actual,
-    color=&#x27;blue&#x27;,
-    label=&#x27;Actual Minimum Wage&#x27;,
-    s=60,
-    zorder=3
-)
-
-# 선형회귀 예측 결과: 직선
-plt.plot(
-    years.flatten(),
-    y_pred_line,
-    color=&#x27;red&#x27;,
-    linewidth=2,
-    label=&#x27;Linear Regression&#x27;
-)
-
-# 2026년, 2028년 예측값: 별 모양 표시
-plt.scatter(
-    future_years.flatten(),
-    future_predictions,
-    color=&#x27;green&#x27;,
-    marker=&#x27;*&#x27;,
-    s=250,
-    label=&#x27;Future Predictions (2026, 2028)&#x27;,
-    zorder=5
-)
-
-# 미래 예측값 옆에 연도와 금액 표시
-for year, wage in zip(future_years.flatten(), future_predictions):
-    plt.annotate(
-        f&#x27;{year}: {wage:,.0f}원&#x27;,
-        (year, wage),
-        xytext=(8, 10),
-        textcoords=&#x27;offset points&#x27;,
-        fontsize=10
-    )
-
-# 실제값과 예측값 사이의 수직선: 잔차
-plt.vlines(
-    X_actual,
-    y_actual,
-    y_pred_actual,
-    colors=&#x27;gray&#x27;,
-    linestyles=&#x27;dashed&#x27;,
-    alpha=0.7,
-    label=&#x27;Residuals&#x27;
-)
-
-# 7. 그래프 꾸미기
-plt.xlabel(&#x27;Year&#x27;, fontsize=12)
-plt.ylabel(&#x27;Minimum Wage (KRW)&#x27;, fontsize=12)
-plt.title(&#x27;Minimum Wage and Linear Regression Prediction&#x27;, fontsize=15)
-
-plt.legend()
-plt.grid(alpha=0.3)
-plt.tight_layout()
-
-# 8. 그래프 출력
-plt.show()</code></pre></div></div>
-<div class="step"><h3>⑥ 추가 실습: 딥러닝 회귀</h3><div class="codebox"><pre><code>import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import tensorflow as tf
-
-from sklearn.preprocessing import MinMaxScaler
-
-# 1. 데이터 준비
-X = df[[&#x27;연도&#x27;]].values.astype(float)
-y = df[[&#x27;최저시급&#x27;]].values.astype(float)
-
-# 2. 데이터 정규화
-scaler_X = MinMaxScaler()
-scaler_y = MinMaxScaler()
-
-X_scaled = scaler_X.fit_transform(X)
-y_scaled = scaler_y.fit_transform(y)
-
-# 3. 딥러닝 모델 생성
-model_dl = tf.keras.Sequential([
-    tf.keras.layers.Input(shape=(1,)),
-    tf.keras.layers.Dense(32, activation=&#x27;relu&#x27;),
-    tf.keras.layers.Dense(16, activation=&#x27;relu&#x27;),
-    tf.keras.layers.Dense(1)
-])
-
-# 4. 모델 컴파일
-model_dl.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
-    loss=&#x27;mse&#x27;
-)
-
-# 5. 모델 학습
-history = model_dl.fit(
-    X_scaled,
-    y_scaled,
-    epochs=500,
-    verbose=0
-)
-
-# 6. 그래프용 연도 생성
-years = np.linspace(
-    X.min(),
-    2028,
-    200
-).reshape(-1, 1)
-
-years_scaled = scaler_X.transform(years)
-
-# 7. 딥러닝 예측
-pred_scaled = model_dl.predict(years_scaled, verbose=0)
-predictions = scaler_y.inverse_transform(pred_scaled)
-
-# 8. 2026년과 2028년 예측
-future_years = np.array([[2026], [2028]])
-future_scaled = scaler_X.transform(future_years)
-
-future_pred_scaled = model_dl.predict(future_scaled, verbose=0)
-future_predictions = scaler_y.inverse_transform(future_pred_scaled)
-
-# 9. 그래프 그리기
-plt.figure(figsize=(12, 7))
-
-# 실제 데이터
-plt.scatter(
-    X.flatten(),
-    y.flatten(),
-    color=&#x27;blue&#x27;,
-    s=60,
-    label=&#x27;Actual Minimum Wage&#x27;,
-    zorder=3
-)
-
-# 딥러닝 예측 곡선
-plt.plot(
-    years.flatten(),
-    predictions.flatten(),
-    color=&#x27;red&#x27;,
-    linewidth=2,
-    label=&#x27;Deep Learning Prediction&#x27;
-)
-
-# 미래 예측값
-plt.scatter(
-    future_years.flatten(),
-    future_predictions.flatten(),
-    color=&#x27;green&#x27;,
-    marker=&#x27;*&#x27;,
-    s=250,
-    label=&#x27;Future Predictions&#x27;,
-    zorder=5
-)
-
-# 예측값 표시
-for year, wage in zip(
-    future_years.flatten(),
-    future_predictions.flatten()
-):
-    plt.annotate(
-        f&#x27;{year}: {wage:,.0f} KRW&#x27;,
-        (year, wage),
-        xytext=(8, 10),
-        textcoords=&#x27;offset points&#x27;
-    )
-
-plt.xlabel(&#x27;Year&#x27;)
-plt.ylabel(&#x27;Minimum Wage (KRW)&#x27;)
-plt.title(&#x27;Deep Learning Minimum Wage Prediction&#x27;)
-
-plt.legend()
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.show()
-
-
-# 10. 학습 손실 그래프
-plt.figure(figsize=(10, 5))
-
-plt.plot(
-    history.history[&#x27;loss&#x27;],
-    color=&#x27;purple&#x27;,
-    label=&#x27;Training Loss&#x27;
-)
-
-plt.xlabel(&#x27;Epoch&#x27;)
-plt.ylabel(&#x27;MSE Loss&#x27;)
-plt.title(&#x27;Deep Learning Training Loss&#x27;)
-
-plt.legend()
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.show()
-
-
-# 11. 미래 예측 결과 출력
-for year, wage in zip(
-    future_years.flatten(),
-    future_predictions.flatten()
-):
-    print(f&#x27;{year}년 예상 최저시급: {wage:,.0f}원&#x27;)</code></pre></div></div>
-<p class="notice">원본 노트북의 예측 연도(2028)와 출력 문구(2026)가 달라 해당 부분을 일치시켰습니다. 딥러닝 코드는 원본 파일에 들어 있는 추가 실습입니다. 학습에 사용한 데이터만으로 일반화 성능을 판단할 수는 없습니다.</p>
-</div></article>
-<article class="example"><div class="example-head"><span class="chip">선형 회귀 · X 전체 사용</span><h2>지하철 승차 인원 예측</h2><p>8~9시 평균 승차 인원으로 9~10시 평균 승차 인원을 예측합니다.</p><div class="source">출처: 군집 _지하철 승차인원 데이터 분석_206.ipynb</div></div><div class="steps">
-<div class="step"><h3>① CSV 업로드 및 불러오기</h3><div class="codebox"><pre><code># CSV 업로드
-from google.colab import files
-uploaded = files.upload()
-
-# 데이터 모습 확인하기
-import pandas as pd
-
-file_name = next(iter(uploaded))
-df = pd.read_csv(file_name, encoding=&#x27;utf-8&#x27;) # utf-8 방식으로 인코딩
-print(df.columns)
-print(&#x27;데이터 개수:&#x27;, len(df))
-df # 데이터 모습 확인</code></pre></div></div>
-<div class="step"><h3>② 지하철역별 평균 계산</h3><div class="codebox"><pre><code># 지하철역별 평균 승차 인원 구하기
-station_df = df.groupby(&#x27;지하철역&#x27;)[[&#x27;08시-09시 승차인원&#x27;,&#x27;09시-10시 승차인원&#x27;]].mean() #두 열의 평균값을 지하철역끼리 묶은 것~
-
-station_df</code></pre></div></div>
-<div class="step"><h3>③ X, y 설정 및 모델 학습</h3><div class="codebox"><pre><code># ① 특성과 정답 데이터 구분하기
-X = station_df[[&#x27;08시-09시 승차인원&#x27;]] # 독립변수 (영향을 주는 변수)
-y = station_df[&#x27;09시-10시 승차인원&#x27;] # 종속변수 (영향을 받는 변수)
-
-# ② 선형 회귀 모델 만들기
-from sklearn.linear_model import LinearRegression
-
-linear_model = LinearRegression()
-
-# ③ 모델 학습시키기
-linear_model.fit(X, y) # 회귀는 정답이 있는 지도학습! -&gt; 정답(종속변수) 추가
-
-print(&#x27;기울기:&#x27;, linear_model.coef_[0])
-print(&#x27;절편:&#x27;, linear_model.intercept_)</code></pre></div></div>
-<div class="step"><h3>④ 한 지하철역 예측</h3><div class="codebox"><pre><code># ① 원하는 지하철역 선택하기
-station = &#x27;충무로&#x27;
-
-# ② 선택한 역의 오전 8~9시 승차 인원 확인하기
-passengers = station_df.loc[station, &#x27;08시-09시 승차인원&#x27;]
-
-# ③ 오전 9~10시 승차 인원 예측하기
-import pandas as pd
-prediction = linear_model.predict(pd.DataFrame(
-    {&#x27;08시-09시 승차인원&#x27;: [passengers]}
-))
-print(f&#x27;{station}의 예측 승차 인원: {prediction[0]:.0f}명&#x27;)</code></pre></div></div>
-<div class="step"><h3>⑤ 실제값과 예측값 비교</h3><div class="codebox"><pre><code># 실제 평균 승차 인원
-actual = station_df.loc[station, &#x27;09시-10시 승차인원&#x27;]
-
-# 모델의 예측 승차 인원
-predicted = prediction[0]
-
-print(f&#x27;실제 평균 승차 인원: {actual}명&#x27;)
-print(f&#x27;예측 승차 인원: {predicted}명&#x27;)
-print(f&#x27;예측 오차: {abs(actual - predicted)}명&#x27;)</code></pre></div></div>
-<div class="step"><h3>⑥ 시각화</h3><div class="codebox"><pre><code># 그래프의 한글 글꼴이 깨지지 않도록 설치
-!pip install koreanize-matplotlib  # !pip은 설치 기능을 뜻함!
-import koreanize_matplotlib
-
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(8, 6))
-
-# ① 전체 지하철역 데이터
-plt.scatter(X, y, alpha=0.4, label=&#x27;All Stations&#x27;)
-
-# ② 회귀 직선
-plt.plot(X, linear_model.predict(X), color=&#x27;red&#x27;, label=&#x27;Regression Line&#x27;)
-
-# ③ 선택한 지하철역의 실제값
-plt.scatter(passengers, actual, color=&#x27;blue&#x27;, s=150,
-            label=&#x27;Actual&#x27;, zorder=5)
-
-# ④ 선택한 지하철역의 예측값
-plt.scatter(passengers, predicted, color=&#x27;orange&#x27;, s=150,
-            label=&#x27;Predicted&#x27;, zorder=5)
-
-plt.xlabel(&#x27;8-9 AM Passengers&#x27;)
-plt.ylabel(&#x27;9-10 AM Passengers&#x27;)
-plt.title(f&#x27;{station} Passenger Prediction&#x27;)
-plt.legend()
-plt.show()</code></pre></div></div>
-<p class="notice">원본의 단일 값 예측 코드는 학습 당시 특성 이름과 입력 형태를 일치시키도록 수정했습니다. 이 예제는 전체 데이터로 학습하므로 별도 테스트 성능 평가는 포함되지 않습니다.</p>
-</div></article>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="description" content="인공지능 기초 수행평가 참고 자료: 회귀, 분류, 군집 코드 모음"><title>AI 모델 구현 참고 자료</title><style>
+:root{--ink:#24314d;--muted:#71809a;--line:#e8edf6;--white:#fff;--bg:#f8faff;--accent:#6378db;--accent-light:#edf0ff;--shadow:0 12px 35px rgba(61,83,132,.07)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font-family: "Pretendard", "SUIT", "Apple SD Gothic Neo", "Malgun Gothic",system-ui,sans-serif;background:radial-gradient(circle at 6% 12%,#eaf1ff 0,transparent 24%),radial-gradient(circle at 97% 6%,#fff0f7 0,transparent 24%),#fafbff;line-height:1.6}button{font:inherit}.site{max-width:1020px;margin:0 auto;padding:0 22px 100px}.hero{position:relative;overflow:hidden;margin:30px 0 23px;padding:39px 43px 36px;border-radius:30px;border:1px solid #e9eafe;background:linear-gradient(120deg,#e7edff 0%,#f6f0ff 51%,#fff0f5 100%);box-shadow:var(--shadow)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;background:#fff9;border:1px solid #ffffffdf;border-radius:99px;color:#6876b6;font-size:12px;letter-spacing:.06em;font-weight:800}.eyebrow i{width:7px;height:7px;border-radius:50%;background:#8f91eb}.hero h1{font-size:clamp(27px,3.6vw,39px);letter-spacing:-.055em;line-height:1.3;margin:17px 0 11px}.hero p{margin:0;max-width:550px;font-size:14px;color:#667690;line-height:1.8}.hero-art{position:absolute;right:58px;top:36px;width:160px;height:150px;transform:rotate(-8deg);opacity:.83}.art-square{position:absolute;border-radius:18px;background:#ffffffb8;box-shadow:0 10px 22px #7585b324;border:1px solid #fff}.art-back{width:103px;height:112px;top:0;right:0;transform:rotate(15deg)}.art-front{width:108px;height:117px;top:25px;right:37px;padding:18px}.art-line{height:9px;border-radius:6px;margin-bottom:11px;background:#cbd6fb}.art-line:nth-child(2){width:69%;background:#e6c9e6}.art-line:nth-child(3){width:83%;background:#b9e7dd}.art-line:nth-child(4){width:58%;background:#cbd6fb}.art-dots{position:absolute;right:4px;top:18px;color:#b6a5e4;font-size:28px}.nav-wrap{position:sticky;top:0;z-index:5;background:#fafbffeb;backdrop-filter:blur(12px);padding:13px 0 12px}.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tab{cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #e4e9f4;border-radius:17px;padding:13px 12px;background:#fff;color:#687790;font-weight:800;font-size:16px;box-shadow:0 4px 14px #50648b07;transition:background .16s,transform .16s,border-color .16s}.tab:hover{transform:translateY(-1px);border-color:#ccd3f2}.tab[aria-selected=true]{color:#fff;background:#7286df;border-color:#7286df;box-shadow:0 7px 19px #7286df42}.tab[data-tab=cls][aria-selected=true]{background:#46af9c;border-color:#46af9c;box-shadow:0 7px 19px #46af9c36}.tab[data-tab=clu][aria-selected=true]{background:#b484cb;border-color:#b484cb;box-shadow:0 7px 19px #b484cb38}.tab:focus-visible{outline:3px solid #a8b9ff;outline-offset:3px}.tab-icon{width:28px;height:28px;display:inline-grid;place-items:center;border-radius:10px;font-size:14px;background:#eff2ff;color:#7e8ee1}.tab[aria-selected=true] .tab-icon{background:#ffffff35;color:#fff}.panel[hidden]{display:none!important}.section-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:17px 3px 18px}.section-title{display:flex;align-items:center;gap:10px}.section-title h2{font-size:20px;letter-spacing:-.04em;margin:0}.section-title p{margin:0;font-size:13px;color:var(--muted)}.count{background:#fff;border:1px solid #e5eaf4;border-radius:99px;color:#7a86a0;padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap}.example{background:#fff;border:1px solid #e9ecf5;border-radius:24px;box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}.example-top{padding:26px 29px 22px;background:linear-gradient(96deg,#fff,#f9faff);border-bottom:1px solid #eef1f7}.topic-number{display:inline-grid;place-items:center;width:33px;height:33px;background:#edf1ff;color:#7181db;border-radius:12px;font-weight:900;font-size:13px;margin-right:8px}.category-cls .topic-number{background:#e5f8f2;color:#4baa95}.category-clu .topic-number{background:#f6eafd;color:#aa7fc1}.chip{display:inline-block;border:1px solid #e4e9fb;background:#f3f5ff;color:#6c7bd0;border-radius:100px;padding:4px 11px;font-size:12px;font-weight:800}.category-cls .chip{color:#389784;border-color:#d8f1e8;background:#f0fbf7}.category-clu .chip{color:#9f6db7;border-color:#f0e1f6;background:#fcf4ff}.example-top h3{font-size:22px;line-height:1.35;margin:13px 0 7px;letter-spacing:-.045em}.desc{margin:0;color:#78859b;font-size:14px}.steps{padding:9px 29px 21px}.step{position:relative;padding:17px 0 9px 20px;border-left:2px solid #edf0f8;margin-left:9px}.step:before{content:'';position:absolute;left:-6px;top:24px;width:10px;height:10px;border-radius:50%;background:#adbaef;box-shadow:0 0 0 4px #f0f3ff}.category-cls .step:before{background:#91d7c3;box-shadow:0 0 0 4px #ecf9f4}.category-clu .step:before{background:#d3b2e2;box-shadow:0 0 0 4px #fbf0ff}.step:last-of-type{border-left-color:transparent}.step-head{display:flex;align-items:center;gap:10px;margin:0 0 11px}.step-index{font-size:11px;color:#9aa7bd;font-weight:900;letter-spacing:.08em}.step h4{margin:0;font-size:15px;color:#3d4b66;letter-spacing:-.025em}.codebox{position:relative;background:#f8f9fd;border:1px solid #e9edf5;border-radius:14px;overflow-x:auto}.codebox pre{margin:0;padding:17px 20px;color:#34435c;font-size:12.8px;line-height:1.8;font-family:Consolas,"D2Coding","Noto Sans Mono","Liberation Mono",monospace;tab-size:4;white-space:pre;user-select:text}.codebox .c1,.codebox .cm{color:#8294a9;font-style:italic}.codebox .kn,.codebox .k,.codebox .ow,.codebox .kd{color:#8a63b3;font-weight:600}.codebox .s,.codebox .s1,.codebox .s2,.codebox .sa,.codebox .si{color:#b66f88}.codebox .mi,.codebox .mf{color:#3f94a7}.codebox .nf,.codebox .nb{color:#477cc3}.codebox .n{color:#34435c}.codebox .o{color:#7284a1}.tip{margin:18px 0 1px;padding:13px 15px;border-radius:12px;background:#f7f9ff;border:1px solid #e8eefb;color:#68758d;font-size:12.5px}.tip strong{color:#7c8bcc}.meta{font-size:11px;color:#a2acc0;margin-top:14px;overflow-wrap:anywhere}.footer{text-align:center;margin-top:31px;color:#a1abc1;font-size:12px}.footer:before{content:'✦';margin-right:7px;color:#b2b9e9}@media(max-width:700px){.site{padding:0 13px 65px}.hero{margin-top:12px;padding:28px 23px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:27px}.hero p{font-size:13px}.tab{font-size:15px;padding:12px 7px;gap:6px}.tabs{gap:7px}.tab-icon{width:22px;height:22px;border-radius:7px}.example{border-radius:19px;margin-bottom:16px}.example-top{padding:20px 19px}.example-top h3{font-size:20px}.steps{padding:6px 15px 16px}.step{padding-left:13px}.codebox pre{font-size:12px;padding:13px}.section-title h2{font-size:18px}.section-title p{font-size:12px}}
+</style></head><body><div class="site">
+<header class="hero"><span class="eyebrow"><i></i> ARTIFICIAL INTELLIGENCE · CODE LIBRARY</span><h1>인공지능 모델 구현<br>참고 자료 <span aria-hidden="true">✦</span></h1><p>수행평가에서 필요한 코드를 찾아보세요.<br>회귀, 분류, 군집의 모델 구현 과정을 단계별로 정리했어요.</p><div class="hero-art" aria-hidden="true"><div class="art-square art-back"></div><div class="art-square art-front"><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div></div><div class="art-dots">✦</div></div></header>
+<nav class="nav-wrap" aria-label="모델 카테고리"><div class="tabs" role="tablist">
+<button type="button" role="tab" class="tab" id="tab-reg" aria-controls="panel-reg" aria-selected="true" tabindex="0" data-tab="reg"><span class="tab-icon" aria-hidden="true">↗</span>회귀</button>
+<button type="button" role="tab" class="tab" id="tab-cls" aria-controls="panel-cls" aria-selected="false" tabindex="-1" data-tab="cls"><span class="tab-icon" aria-hidden="true">▦</span>분류</button>
+<button type="button" role="tab" class="tab" id="tab-clu" aria-controls="panel-clu" aria-selected="false" tabindex="-1" data-tab="clu"><span class="tab-icon" aria-hidden="true">◈</span>군집</button>
+</div></nav><main>
+<section class="panel" id="panel-reg" role="tabpanel" aria-labelledby="tab-reg" ><div class="section-intro"><div class="section-title"><h2>회귀 모델</h2><p>· 위에서 아래 순서로 살펴보세요</p></div><span class="count">3개 예제</span></div>
+<article class="example category-reg"><div class="example-top"><span class="topic-number">01</span><span class="chip">선형 회귀 · X_train 사용</span><h3>펭귄 부리 길이 예측</h3><p class="desc">펭귄 데이터의 특성을 이용해 부리 길이를 예측합니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 불러오기 및 X, y 설정</h4></div><div class="codebox"><pre><code><span class="c1"># 데이터를 불러와 봅시다.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;펭귄_데이터(처리전).csv&quot;</span><span class="p">)</span>
+
+<span class="n">df</span>
+
+<span class="c1"># 펭귄의 키와 날개길이, 몸무게를 활용하여 부리길이를 예측하도록 변수를 설정해 봅시다.</span>
+
+<span class="c1"># 독립 변수</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span> <span class="p">[[</span><span class="s1">&#39;키_m&#39;</span><span class="p">,</span> <span class="s1">&#39;날개길이_cm&#39;</span><span class="p">,</span> <span class="s1">&#39;몸무게_kg&#39;</span><span class="p">]]</span>
+
+<span class="c1"># 종속 변수</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;부리길이_cm&#39;</span><span class="p">]</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>정규화</h4></div><div class="codebox"><pre><code><span class="c1"># 정규화를 진행해 봅시다.</span>
+
+<span class="c1"># 정규화에 필요한 기능 불러오기</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="c1"># X 데이터를 배열 형태로 변환</span>
+<span class="n">data_array</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
+
+<span class="c1"># 최소-최대 정규화 방법을 사용할 틀 제작</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+
+<span class="c1"># X 데이터를 0~1 사이의 값으로 정규화한 값을 변수에 저장</span>
+<span class="n">normalized_data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data_array</span><span class="p">)</span>
+
+<span class="c1"># 정규화한 데이터를 다시 데이터 프레임으로 변환(기존 X의 열 이름을 그대로 사용)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="n">X</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>훈련·테스트 데이터 분리</h4></div><div class="codebox"><pre><code><span class="c1"># 테스트 나누기에 필요한 기능 불러오기</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># 아래에 코드를 채워 봅시다.</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># 60개의 데이터가 있을 때 테스트 데이터 18개</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="c1"># 선형회귀 모델을 생성하고, 학습을 진행하는 코드를 작성해 봅시다.</span>
+
+<span class="c1"># 선형 회귀 모델 생성에 필요한 기능 불러오기</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1"># 아래에 코드를 채워 봅시다.</span>
+<span class="c1"># 선형회귀 알고리즘으로 틀을 만듦</span>
+<span class="n">linear_model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+
+<span class="c1"># 훈련 데이터를 통해서 실제 인공지능 모델을 학습시킴.</span>
+<span class="n">linear_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>예측 및 성능 평가</h4></div><div class="codebox"><pre><code><span class="c1"># 모델을 이용하여 예측 결과를 출력하는 코드를 작성해 봅시다.</span>
+
+<span class="n">linear_predict</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">linear_predict</span> <span class="c1"># 저장한 예측 결과 출력하기</span>
+
+<span class="c1"># 모델의 성능을 판단하는 함수 불러오기</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+
+<span class="c1"># 실제값과 예측값을 비교하여 결정 계수 구하기</span>
+<span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">linear_predict</span><span class="p">)</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 원본 수업 코드에서는 데이터 분리 전에 전체 X를 정규화합니다. 별도 테스트 성능을 엄밀히 평가할 때는 훈련 데이터에만 정규화 기준을 학습시키는 것이 좋습니다.</div>
+<div class="meta">자료 출처: 05_회귀_모델_구현_205.ipynb</div></div></article>
+<article class="example category-reg"><div class="example-top"><span class="topic-number">02</span><span class="chip">선형 회귀 · X 전체 사용</span><h3>최저시급 예측</h3><p class="desc">연도와 최저시급 데이터를 사용하며 훈련·테스트 데이터를 나누지 않습니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>CSV 업로드 및 데이터 불러오기</h4></div><div class="codebox"><pre><code><span class="c1"># ① CSV 업로드 (코랩에서 실행)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
+<span class="n">uploaded</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">()</span>  <span class="c1"># 내가 만든 CSV 파일 선택</span>
+
+<span class="c1"># ② 데이터 불러오기</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">file_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">uploaded</span><span class="p">))</span>  <span class="c1"># 업로드한 파일 이름</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1"># 파일 읽기~</span>
+<span class="n">df</span>
+
+<span class="c1"># ③ 데이터 확인: 열 이름 / 데이터 개수 / 결측치</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;열 이름:&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;자료 개수:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;결측치 개수:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="c1"># 열 이름이 &#39;연도&#39;, &#39;최저시급&#39;인지 확인하기!</span>
+<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;연도&#39;</span><span class="p">,</span> <span class="s1">&#39;최저시급&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="s1">&#39;CSV 열 이름을 확인하세요.&#39;</span>
+<span class="c1"># 숫자 자료로 변환</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;연도&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;연도&#39;</span><span class="p">])</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;최저시급&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;최저시급&#39;</span><span class="p">])</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>X, y 설정</h4></div><div class="codebox"><pre><code><span class="c1"># ① 독립 변수(X)와 종속 변수(y) 설정하기</span>
+
+<span class="c1"># 빈칸을 채워보세요!</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;연도&#39;</span><span class="p">]]</span> <span class="c1"># 데이터 프레임으로 만들어야 하기 때문에 대괄호 2개</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;최저시급&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="c1"># ② 선형회귀 모델 생성과 학습</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;기울기:&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;절편:&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>특정 연도 예측</h4></div><div class="codebox"><pre><code><span class="c1"># 예측할 연도를 설정합니다.</span>
+<span class="c1"># X는 열 하나를 가진 2차원 입력이어야 합니다.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">year</span> <span class="o">=</span> <span class="mi">2028</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;연도&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">year</span><span class="p">]}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">년 예측 최저시급:&#39;</span><span class="p">,</span> <span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>추가 실습: 딥러닝 회귀</h4></div><div class="codebox"><pre><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="c1"># 1. 데이터 준비</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;연도&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;최저시급&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># 2. 데이터 정규화</span>
+<span class="n">scaler_X</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+<span class="n">scaler_y</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">scaler_X</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_scaled</span> <span class="o">=</span> <span class="n">scaler_y</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># 3. 딥러닝 모델 생성</span>
+<span class="n">model_dl</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)),</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># 4. 모델 컴파일</span>
+<span class="n">model_dl</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># 5. 모델 학습</span>
+<span class="n">history</span> <span class="o">=</span> <span class="n">model_dl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">X_scaled</span><span class="p">,</span>
+    <span class="n">y_scaled</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+
+<span class="c1"># 6. 원하는 연도의 최저시급 예측</span>
+<span class="n">future_years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2026</span><span class="p">],</span> <span class="p">[</span><span class="mi">2028</span><span class="p">]])</span>
+<span class="n">future_scaled</span> <span class="o">=</span> <span class="n">scaler_X</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">future_years</span><span class="p">)</span>
+<span class="n">future_pred_scaled</span> <span class="o">=</span> <span class="n">model_dl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">future_scaled</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">future_predictions</span> <span class="o">=</span> <span class="n">scaler_y</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">future_pred_scaled</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">wage</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">future_years</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">future_predictions</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">년 예상 최저시급: </span><span class="si">{</span><span class="n">wage</span><span class="si">:</span><span class="s1">,.0f</span><span class="si">}</span><span class="s1">원&#39;</span><span class="p">)</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 원본 노트북의 예측 연도(2028)와 출력 문구(2026)가 달라 해당 부분을 일치시켰습니다. 딥러닝 코드는 원본 파일에 들어 있는 추가 실습입니다. 학습에 사용한 데이터만으로 일반화 성능을 판단할 수는 없습니다.</div>
+<div class="meta">자료 출처: 회귀 - 미래의 최저시급은 얼마일까__206.ipynb</div></div></article>
+<article class="example category-reg"><div class="example-top"><span class="topic-number">03</span><span class="chip">선형 회귀 · X 전체 사용</span><h3>지하철 승차 인원 예측</h3><p class="desc">8~9시 평균 승차 인원으로 9~10시 평균 승차 인원을 예측합니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>CSV 업로드 및 불러오기</h4></div><div class="codebox"><pre><code><span class="c1"># CSV 업로드</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
+<span class="n">uploaded</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">()</span>
+
+<span class="c1"># 데이터 모습 확인하기</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">file_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">uploaded</span><span class="p">))</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1"># utf-8 방식으로 인코딩</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;데이터 개수:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="n">df</span> <span class="c1"># 데이터 모습 확인</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>지하철역별 평균 계산</h4></div><div class="codebox"><pre><code><span class="c1"># 지하철역별 평균 승차 인원 구하기</span>
+<span class="n">station_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;지하철역&#39;</span><span class="p">)[[</span><span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">,</span><span class="s1">&#39;09시-10시 승차인원&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="c1">#두 열의 평균값을 지하철역끼리 묶은 것~</span>
+
+<span class="n">station_df</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>X, y 설정 및 모델 학습</h4></div><div class="codebox"><pre><code><span class="c1"># ① 특성과 정답 데이터 구분하기</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">station_df</span><span class="p">[[</span><span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">]]</span> <span class="c1"># 독립변수 (영향을 주는 변수)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">station_df</span><span class="p">[</span><span class="s1">&#39;09시-10시 승차인원&#39;</span><span class="p">]</span> <span class="c1"># 종속변수 (영향을 받는 변수)</span>
+
+<span class="c1"># ② 선형 회귀 모델 만들기</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">linear_model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+
+<span class="c1"># ③ 모델 학습시키기</span>
+<span class="n">linear_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1"># 회귀는 정답이 있는 지도학습! -&gt; 정답(종속변수) 추가</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;기울기:&#39;</span><span class="p">,</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;절편:&#39;</span><span class="p">,</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">intercept_</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>한 지하철역 예측</h4></div><div class="codebox"><pre><code><span class="c1"># ① 원하는 지하철역 선택하기</span>
+<span class="n">station</span> <span class="o">=</span> <span class="s1">&#39;충무로&#39;</span>
+
+<span class="c1"># ② 선택한 역의 오전 8~9시 승차 인원 확인하기</span>
+<span class="n">passengers</span> <span class="o">=</span> <span class="n">station_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">station</span><span class="p">,</span> <span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">]</span>
+
+<span class="c1"># ③ 오전 9~10시 승차 인원 예측하기</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">passengers</span><span class="p">]}</span>
+<span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s1">의 예측 승차 인원: </span><span class="si">{</span><span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">명&#39;</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>실제값과 예측값 비교</h4></div><div class="codebox"><pre><code><span class="c1"># 실제 평균 승차 인원</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">station_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">station</span><span class="p">,</span> <span class="s1">&#39;09시-10시 승차인원&#39;</span><span class="p">]</span>
+
+<span class="c1"># 모델의 예측 승차 인원</span>
+<span class="n">predicted</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;실제 평균 승차 인원: </span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s1">명&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;예측 승차 인원: </span><span class="si">{</span><span class="n">predicted</span><span class="si">}</span><span class="s1">명&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;예측 오차: </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">actual</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">predicted</span><span class="p">)</span><span class="si">}</span><span class="s1">명&#39;</span><span class="p">)</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 원본의 단일 값 예측 코드는 학습 당시 특성 이름과 입력 형태를 일치시키도록 수정했습니다. 이 예제는 전체 데이터로 학습하므로 별도 테스트 성능 평가는 포함되지 않습니다.</div>
+<div class="meta">자료 출처: 군집 _지하철 승차인원 데이터 분석_206.ipynb</div></div></article>
 </section>
-<section class="panel" id="panel-cls" role="tabpanel" aria-labelledby="tab-cls" hidden><p class="intro">분류 모델 구현 예제 · 아래 코드들은 각 예제 안에서 위에서 아래 순서로 확인하세요.</p>
-<article class="example"><div class="example-head"><span class="chip">KNN · X_train 사용</span><h2>펭귄 종류 분류</h2><p>펭귄의 키, 날개 길이, 몸무게, 부리 길이로 종류를 분류합니다.</p><div class="source">출처: 04_분류_모델_구현_206.ipynb</div></div><div class="steps">
-<div class="step"><h3>① 데이터 불러오기</h3><div class="codebox"><pre><code># 기본적인 설정 코드를 확인해 봅시다.
+<section class="panel" id="panel-cls" role="tabpanel" aria-labelledby="tab-cls" hidden><div class="section-intro"><div class="section-title"><h2>분류 모델</h2><p>· 위에서 아래 순서로 살펴보세요</p></div><span class="count">2개 예제</span></div>
+<article class="example category-cls"><div class="example-top"><span class="topic-number">01</span><span class="chip">KNN · X_train 사용</span><h3>펭귄 종류 분류</h3><p class="desc">펭귄의 키, 날개 길이, 몸무게, 부리 길이로 종류를 분류합니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 불러오기</h4></div><div class="codebox"><pre><code><span class="c1"># 기본적인 설정 코드를 확인해 봅시다.</span>
 
-import pandas as pd
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-# 필요한 기능을 불러오는 코드
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+<span class="c1"># 필요한 기능을 불러오는 코드</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 
 
 
-df = pd.read_csv(&quot;펭귄_데이터.csv&quot;)
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;펭귄_데이터.csv&quot;</span><span class="p">)</span>
 
-df # 데이터 확인</code></pre></div></div>
-<div class="step"><h3>② X, y 설정</h3><div class="codebox"><pre><code># 독립 변수 : 종속 변수에게 영향을 주는 변수
-X = df[[&quot;키_cm&quot;, &quot;날개길이_cm&quot;, &quot;몸무게_kg&quot;, &quot;부리길이_cm&quot;]]
-# 종속 변수 : 우리가 알고자 하는 값, 예측할 값
-y = df[&quot;종류&quot;]
+<span class="n">df</span> <span class="c1"># 데이터 확인</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>X, y 설정</h4></div><div class="codebox"><pre><code><span class="c1"># 독립 변수 : 종속 변수에게 영향을 주는 변수</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;키_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;날개길이_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;몸무게_kg&quot;</span><span class="p">,</span> <span class="s2">&quot;부리길이_cm&quot;</span><span class="p">]]</span>
+<span class="c1"># 종속 변수 : 우리가 알고자 하는 값, 예측할 값</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;종류&quot;</span><span class="p">]</span>
 
-print(X)
-print(y)</code></pre></div></div>
-<div class="step"><h3>③ 훈련·테스트 데이터 분리</h3><div class="codebox"><pre><code># 먼저 코드를 실행하고, 어떤 결과가 나오는지 확인해 봅시다.
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>훈련·테스트 데이터 분리</h4></div><div class="codebox"><pre><code><span class="c1"># 먼저 코드를 실행하고, 어떤 결과가 나오는지 확인해 봅시다.</span>
 
-# 전체 데이터를 테스트 데이터와 훈련 데이터로 나눈다.
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.2, # 테스트 데이터의 양을 결정한다.
-    # 100개의 전체 데이터가 있을 때 테스트 데이터 개수는 20개!!!!
-    random_state=42 # 테스트 데이터를 고정
-)
+<span class="c1"># 전체 데이터를 테스트 데이터와 훈련 데이터로 나눈다.</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="c1"># 테스트 데이터의 양을 결정한다.</span>
+    <span class="c1"># 100개의 전체 데이터가 있을 때 테스트 데이터 개수는 20개!!!!</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span> <span class="c1"># 테스트 데이터를 고정</span>
+<span class="p">)</span>
 
-print(&quot;전체 데이터:&quot;, len(X))
-print(&quot;훈련 데이터:&quot;, len(X_train))
-print(&quot;테스트 데이터:&quot;, len(X_test))</code></pre></div></div>
-<div class="step"><h3>④ KNN 모델 생성 및 학습</h3><div class="codebox"><pre><code>model = KNeighborsClassifier(n_neighbors=3)
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;전체 데이터:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;훈련 데이터:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;테스트 데이터:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>KNN 모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="n">model</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
-# 다음 두 코드 중 하나는 잘못된 코드입니다. 어떤 코드를 사용해야 할까요?
+<span class="c1"># 다음 두 코드 중 하나는 잘못된 코드입니다. 어떤 코드를 사용해야 할까요?</span>
 
-# 훈련 데이터로 모델을 학습
-model.fit(X_train, y_train)</code></pre></div></div>
-<div class="step"><h3>⑤ 예측 및 정확도 평가</h3><div class="codebox"><pre><code># 앞서 만든 모델을 사용해서 테스트 데이터로 예측
-# 예측한 결과는 y_pred 변수에 저장
-y_pred = model.predict(X_test)
+<span class="c1"># 훈련 데이터로 모델을 학습</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>예측 및 정확도 평가</h4></div><div class="codebox"><pre><code><span class="c1"># 앞서 만든 모델을 사용해서 테스트 데이터로 예측</span>
+<span class="c1"># 예측한 결과는 y_pred 변수에 저장</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 
-print(&quot;실제값&quot;, list(y_test))
-print(&quot;예측한 값:&quot;, list(y_pred))
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;실제값&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_test</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;예측한 값:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
 
-# 정확도를 계산하는 코드
-# 전체 테스트 데이터 12개, 맞힌 데이터는 11개
-# 맞힌 데이터 개수 / 전체 테스트 데이터 개수
-accuracy_score(y_test, y_pred)</code></pre></div></div>
-<div class="step"><h3>⑥ 새로운 데이터 예측</h3><div class="codebox"><pre><code># 새로운 데이터가 입력되었을 때, 어떻게 분류되는지 확인해 봅시다.
+<span class="c1"># 정확도를 계산하는 코드</span>
+<span class="c1"># 전체 테스트 데이터 12개, 맞힌 데이터는 11개</span>
+<span class="c1"># 맞힌 데이터 개수 / 전체 테스트 데이터 개수</span>
+<span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 06</span><h4>새로운 데이터 예측</h4></div><div class="codebox"><pre><code><span class="c1"># 새로운 데이터가 입력되었을 때, 어떻게 분류되는지 확인해 봅시다.</span>
 
-new_data = pd.DataFrame(
-    [[48.0, 21.0, 3.5, 4.3]],
-    columns=[&quot;키_cm&quot;, &quot;날개길이_cm&quot;, &quot;몸무게_kg&quot;, &quot;부리길이_cm&quot;]
-)
+<span class="n">new_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[[</span><span class="mf">48.0</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">]],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;키_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;날개길이_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;몸무게_kg&quot;</span><span class="p">,</span> <span class="s2">&quot;부리길이_cm&quot;</span><span class="p">]</span>
+<span class="p">)</span>
 
-result = model.predict(new_data)
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
 
-print(&quot;예측 결과:&quot;, result[0])</code></pre></div></div>
-<p class="notice">KNN은 입력 특성들의 단위와 크기에 영향을 받을 수 있습니다. 원본 파일에서는 정규화 과정 없이 실습합니다.</p>
-</div></article>
-<article class="example"><div class="example-head"><span class="chip">의사결정트리 · X_train 사용</span><h2>붓꽃 종류 분류</h2><p>AI 복구 챌린지에서 사용한 붓꽃 데이터 분류 코드를 완성된 형태로 정리했습니다.</p><div class="source">출처: AI 복구 챌린지_206.ipynb</div></div><div class="steps">
-<div class="step"><h3>① 데이터 준비 및 기능 불러오기</h3><div class="codebox"><pre><code>from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;예측 결과:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · KNN은 입력 특성들의 단위와 크기에 영향을 받을 수 있습니다. 원본 파일에서는 정규화 과정 없이 실습합니다.</div>
+<div class="meta">자료 출처: 04_분류_모델_구현_206.ipynb</div></div></article>
+<article class="example category-cls"><div class="example-top"><span class="topic-number">02</span><span class="chip">의사결정트리 · X_train 사용</span><h3>붓꽃 종류 분류</h3><p class="desc">AI 복구 챌린지에서 사용한 붓꽃 데이터 분류 코드를 완성된 형태로 정리했습니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 준비 및 기능 불러오기</h4></div><div class="codebox"><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 
-df = load_iris(as_frame=True).frame
-print(&#x27;데이터 준비 완료:&#x27;, df.shape) # 행과 열의 개수를 알려주는 함수 shape
-df</code></pre></div></div>
-<div class="step"><h3>② 독립 변수·종속 변수 설정부터 예측까지</h3><div class="codebox"><pre><code>X = df[[&#x27;petal length (cm)&#x27;, &#x27;petal width (cm)&#x27;]] # 독립변수
-y = df[&#x27;target&#x27;] # 종속변수
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;데이터 준비 완료:&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># 행과 열의 개수를 알려주는 함수 shape</span>
+<span class="n">df</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>독립 변수·종속 변수 설정부터 예측까지</h4></div><div class="codebox"><pre><code><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;petal length (cm)&#39;</span><span class="p">,</span> <span class="s1">&#39;petal width (cm)&#39;</span><span class="p">]]</span> <span class="c1"># 독립변수</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="c1"># 종속변수</span>
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
-)   #테스트 데이터를 0.3의 비율로 해서 선언~!
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>   <span class="c1">#테스트 데이터를 0.3의 비율로 해서 선언~!</span>
 
-model = DecisionTreeClassifier(random_state=42) # 의사결정트리로 모델 틀 제작
-model.fit(X_train, y_train)  # 훈련데이터로 학습시킨다~!
-y_pred = model.predict(X_test) # 예측한 결과는 y_pred에 저장~
-accuracy = accuracy_score(y_test, y_pred)
-print(&#x27;정확도:&#x27;, accuracy)</code></pre></div></div>
-<div class="step"><h3>③ 정확도 출력</h3><div class="codebox"><pre><code>print(&#x27;정확도:&#x27;, accuracy_score(y_test, y_pred))</code></pre></div></div>
-<p class="notice">원본의 고장 난 코드·빈칸 문제는 제외하고, 수정된 코드만 실었습니다.</p>
-</div></article>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span> <span class="c1"># 의사결정트리로 모델 틀 제작</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># 훈련데이터로 학습시킨다~!</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span> <span class="c1"># 예측한 결과는 y_pred에 저장~</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;정확도:&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>정확도 출력</h4></div><div class="codebox"><pre><code><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;정확도:&#39;</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 원본의 고장 난 코드·빈칸 문제는 제외하고, 수정된 코드만 실었습니다.</div>
+<div class="meta">자료 출처: AI 복구 챌린지_206.ipynb</div></div></article>
 </section>
-<section class="panel" id="panel-clu" role="tabpanel" aria-labelledby="tab-clu" hidden><p class="intro">군집 모델 구현 예제 · 아래 코드들은 각 예제 안에서 위에서 아래 순서로 확인하세요.</p>
-<article class="example"><div class="example-head"><span class="chip">K-Means · X 전체 사용</span><h2>펭귄 특성 군집화</h2><p>정답 y 없이 펭귄 특성으로 비슷한 데이터를 묶습니다.</p><div class="source">출처: 06_군집__모델_구현_205.ipynb</div></div><div class="steps">
-<div class="step"><h3>① 데이터 불러오기 및 특성 선택</h3><div class="codebox"><pre><code># 데이터를 불러와 봅시다.
-import pandas as pd
-df = pd.read_csv(&quot;펭귄_데이터(처리전2).csv&quot;)
+<section class="panel" id="panel-clu" role="tabpanel" aria-labelledby="tab-clu" hidden><div class="section-intro"><div class="section-title"><h2>군집 모델</h2><p>· 위에서 아래 순서로 살펴보세요</p></div><span class="count">2개 예제</span></div>
+<article class="example category-clu"><div class="example-top"><span class="topic-number">01</span><span class="chip">K-Means · X 전체 사용</span><h3>펭귄 특성 군집화</h3><p class="desc">정답 y 없이 펭귄 특성으로 비슷한 데이터를 묶습니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 불러오기 및 특성 선택</h4></div><div class="codebox"><pre><code><span class="c1"># 데이터를 불러와 봅시다.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;펭귄_데이터(처리전2).csv&quot;</span><span class="p">)</span>
 
-df
+<span class="n">df</span>
 
-# 정답 없이 펭귄을 분류할 수 있도록 코드를 작성해 봅시다.
+<span class="c1"># 정답 없이 펭귄을 분류할 수 있도록 코드를 작성해 봅시다.</span>
 
-# 독립변수만!!
-X = df[[&quot;키_m&quot;, &quot;날개길이_cm&quot;, &quot;몸무게_kg&quot;, &quot;부리길이_cm&quot;]]</code></pre></div></div>
-<div class="step"><h3>② 정규화</h3><div class="codebox"><pre><code># 군집화에 사용할 X만 정규화합니다.
-from sklearn.preprocessing import MinMaxScaler
+<span class="c1"># 독립변수만!!</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;키_m&quot;</span><span class="p">,</span> <span class="s2">&quot;날개길이_cm&quot;</span><span class="p">,</span> <span class="s2">&quot;몸무게_kg&quot;</span><span class="p">,</span> <span class="s2">&quot;부리길이_cm&quot;</span><span class="p">]]</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>정규화</h4></div><div class="codebox"><pre><code><span class="c1"># 군집화에 사용할 X만 정규화합니다.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
 
-scaler = MinMaxScaler()
-normalized_data = scaler.fit_transform(X)
-dfnew = pd.DataFrame(normalized_data, columns=X.columns)
-dfnew</code></pre></div></div>
-<div class="step"><h3>③ 군집 모델 생성 및 학습</h3><div class="codebox"><pre><code>from sklearn.cluster import KMeans
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+<span class="n">normalized_data</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">dfnew</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">normalized_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">dfnew</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>군집 모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
-clust_model = KMeans(n_clusters=4, random_state=42, n_init=10)
-clust_model.fit(dfnew)</code></pre></div></div>
-<div class="step"><h3>④ 군집 중심과 예측 결과</h3><div class="codebox"><pre><code># 각 군집의 중심점을 centers 변수에 저장하기
-centers = clust_model.cluster_centers_
+<span class="n">clust_model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">clust_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dfnew</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>군집 중심과 예측 결과</h4></div><div class="codebox"><pre><code><span class="c1"># 각 군집의 중심점을 centers 변수에 저장하기</span>
+<span class="n">centers</span> <span class="o">=</span> <span class="n">clust_model</span><span class="o">.</span><span class="n">cluster_centers_</span>
 
-# dfnew 데이터를 활용한 군집 모델의 예측값을 pred 변수에 저장하는 코드를 작성해 봅시다.
-pred = clust_model.predict(dfnew)
+<span class="c1"># dfnew 데이터를 활용한 군집 모델의 예측값을 pred 변수에 저장하는 코드를 작성해 봅시다.</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">clust_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">dfnew</span><span class="p">)</span>
 
-print(centers)
-print(pred)</code></pre></div></div>
-<div class="step"><h3>⑤ 군집 결과 저장 및 확인</h3><div class="codebox"><pre><code># 군집 결과를 데이터 열에 저장해 봅시다.
+<span class="nb">print</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>군집 결과 저장 및 확인</h4></div><div class="codebox"><pre><code><span class="c1"># 군집 결과를 데이터 열에 저장해 봅시다.</span>
 
-# 기존의 dfnew를 복사하여 새로운 데이터 프레임 clust_df 생성
-clust_df = dfnew.copy()
+<span class="c1"># 기존의 dfnew를 복사하여 새로운 데이터 프레임 clust_df 생성</span>
+<span class="n">clust_df</span> <span class="o">=</span> <span class="n">dfnew</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-# clust_df에 군집이라는 열 생성, 예측한 군집 저장
-clust_df[&#x27;군집&#x27;] = pred
+<span class="c1"># clust_df에 군집이라는 열 생성, 예측한 군집 저장</span>
+<span class="n">clust_df</span><span class="p">[</span><span class="s1">&#39;군집&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span>
 
-# clulst_df의 상위 5개 항목 표출
-clust_df.head()
+<span class="c1"># clulst_df의 상위 5개 항목 표출</span>
+<span class="n">clust_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 
-# 군집이 잘 되었는지 확인해 봅시다.
-clust_df.groupby(&#x27;군집&#x27;).count()</code></pre></div></div>
-<div class="step"><h3>⑥ 실루엣 계수</h3><div class="codebox"><pre><code>from sklearn.metrics import silhouette_score
+<span class="c1"># 군집이 잘 되었는지 확인해 봅시다.</span>
+<span class="n">clust_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;군집&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 06</span><h4>실루엣 계수</h4></div><div class="codebox"><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">silhouette_score</span>
 
-labels = clust_model.labels_
-silhouette_avg = silhouette_score(dfnew, labels)
-print(&#x27;실루엣 계수 :&#x27;, silhouette_avg)</code></pre></div></div>
-<p class="notice">원본은 정규화 과정에 개체번호를 포함한 뒤 제거합니다. 여기서는 처음부터 X 특성만 정규화하도록 정리했습니다. 실루엣 계수도 군집 번호 열을 제외한 학습 특성으로 계산하도록 수정했습니다.</p>
-</div></article>
-<article class="example"><div class="example-head"><span class="chip">K-Means · X 전체 사용</span><h2>지하철 승차 인원 군집화</h2><p>오전과 저녁 승차 인원이 비슷한 지하철역 데이터를 묶습니다.</p><div class="source">출처: 군집 _지하철 승차인원 데이터 분석_206.ipynb</div></div><div class="steps">
-<div class="step"><h3>① CSV 업로드 및 불러오기</h3><div class="codebox"><pre><code># CSV 업로드
-from google.colab import files
-uploaded = files.upload()
+<span class="n">labels</span> <span class="o">=</span> <span class="n">clust_model</span><span class="o">.</span><span class="n">labels_</span>
+<span class="n">silhouette_avg</span> <span class="o">=</span> <span class="n">silhouette_score</span><span class="p">(</span><span class="n">dfnew</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;실루엣 계수 :&#39;</span><span class="p">,</span> <span class="n">silhouette_avg</span><span class="p">)</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 원본은 정규화 과정에 개체번호를 포함한 뒤 제거합니다. 여기서는 처음부터 X 특성만 정규화하도록 정리했습니다. 실루엣 계수도 군집 번호 열을 제외한 학습 특성으로 계산하도록 수정했습니다.</div>
+<div class="meta">자료 출처: 06_군집__모델_구현_205.ipynb</div></div></article>
+<article class="example category-clu"><div class="example-top"><span class="topic-number">02</span><span class="chip">K-Means · X 전체 사용</span><h3>지하철 승차 인원 군집화</h3><p class="desc">오전과 저녁 승차 인원이 비슷한 지하철역 데이터를 묶습니다.</p></div><div class="steps">
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>CSV 업로드 및 불러오기</h4></div><div class="codebox"><pre><code><span class="c1"># CSV 업로드</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
+<span class="n">uploaded</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">()</span>
 
-# 데이터 모습 확인하기
-import pandas as pd
+<span class="c1"># 데이터 모습 확인하기</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-file_name = next(iter(uploaded))
-df = pd.read_csv(file_name, encoding=&#x27;utf-8&#x27;) # utf-8 방식으로 인코딩
-print(df.columns)
-print(&#x27;데이터 개수:&#x27;, len(df))
-df # 데이터 모습 확인</code></pre></div></div>
-<div class="step"><h3>② 군집화할 X 설정</h3><div class="codebox"><pre><code># 군집화할 두 가지 특성 선택
-X = df[[&#x27;08시-09시 승차인원&#x27;, &#x27;18시-19시 승차인원&#x27;]]
+<span class="n">file_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">uploaded</span><span class="p">))</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1"># utf-8 방식으로 인코딩</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;데이터 개수:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="n">df</span> <span class="c1"># 데이터 모습 확인</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>군집화할 X 설정</h4></div><div class="codebox"><pre><code><span class="c1"># 군집화할 두 가지 특성 선택</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">,</span> <span class="s1">&#39;18시-19시 승차인원&#39;</span><span class="p">]]</span>
 
-X.head() # 앞부터 5개 데이터 출력</code></pre></div></div>
-<div class="step"><h3>③ K-Means 모델 생성 및 학습</h3><div class="codebox"><pre><code># 군집 모델 생성 및 학습
-from sklearn.cluster import KMeans
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span> <span class="c1"># 앞부터 5개 데이터 출력</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>K-Means 모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="c1"># 군집 모델 생성 및 학습</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
-model = KMeans(n_clusters=3, random_state=42, n_init=10)
+<span class="n">model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
-model.fit(X)
-df[&#x27;군집&#x27;] = model.predict(X)
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;군집&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-df[[&#x27;지하철역&#x27;, &#x27;군집&#x27;]]</code></pre></div></div>
-<div class="step"><h3>④ 군집 결과 시각화</h3><div class="codebox"><pre><code># 군집 결과를 시각화하는 코드
-import matplotlib.pyplot as plt
+<span class="n">df</span><span class="p">[[</span><span class="s1">&#39;지하철역&#39;</span><span class="p">,</span> <span class="s1">&#39;군집&#39;</span><span class="p">]]</span>
+</code></pre></div></section>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>군집별 특성 확인</h4></div><div class="codebox"><pre><code><span class="c1"># 군집별 평균 승차 인원</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;군집&#39;</span><span class="p">)[[</span><span class="s1">&#39;08시-09시 승차인원&#39;</span><span class="p">,</span> <span class="s1">&#39;18시-19시 승차인원&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
-plt.figure(figsize=(8, 6))
-plt.scatter(X[&#x27;08시-09시 승차인원&#x27;], X[&#x27;18시-19시 승차인원&#x27;], c=df[&#x27;군집&#x27;], cmap=&#x27;viridis&#x27;) #군집에 따라서 색깔 구분!
-plt.xlabel(&#x27;Morning passengers (8-9)&#x27;)
-plt.ylabel(&#x27;Evening passengers (18-19)&#x27;)
-plt.title(&#x27;K-Means Clustering&#x27;)
-plt.show()</code></pre></div></div>
-<div class="step"><h3>⑤ 군집별 특성 확인</h3><div class="codebox"><pre><code># 군집별 평균 승차 인원
-print(df.groupby(&#x27;군집&#x27;)[[&#x27;08시-09시 승차인원&#x27;, &#x27;18시-19시 승차인원&#x27;]].mean().round(0))
-
-# 각 군집에 포함된 데이터 개수
-print(df[&#x27;군집&#x27;].value_counts().sort_index())</code></pre></div></div>
-<p class="notice">군집 번호는 각 그룹을 구분하는 이름표일 뿐이며, 숫자가 높다고 승차 인원이 더 많다는 뜻은 아닙니다.</p>
-</div></article>
+<span class="c1"># 각 군집에 포함된 데이터 개수</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;군집&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">())</span>
+</code></pre></div></section>
+<div class="tip"><strong>참고</strong> · 군집 번호는 각 그룹을 구분하는 이름표일 뿐이며, 숫자가 높다고 승차 인원이 더 많다는 뜻은 아닙니다.</div>
+<div class="meta">자료 출처: 군집 _지하철 승차인원 데이터 분석_206.ipynb</div></div></article>
 </section>
-<div class="footer">코드 내용은 제공된 코랩 수업 파일을 기준으로 정리했습니다. · 별도 코드 복사 버튼 없음</div></main><script>
+</main><footer class="footer">AI 모델 구현 참고 자료 · 수업용 코랩 파일을 바탕으로 제작</footer></div><script>
 const tabs=[...document.querySelectorAll('[role="tab"]')];
 function activate(key){for(const t of tabs){const chosen=t.dataset.tab===key;t.setAttribute('aria-selected',String(chosen));t.tabIndex=chosen?0:-1;document.getElementById('panel-'+t.dataset.tab).hidden=!chosen;}}
 for(const t of tabs){t.addEventListener('click',()=>activate(t.dataset.tab));t.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const i=tabs.indexOf(t);const next=e.key==='Home'?0:e.key==='End'?tabs.length-1:e.key==='ArrowRight'?(i+1)%tabs.length:(i-1+tabs.length)%tabs.length;activate(tabs[next].dataset.tab);tabs[next].focus();});}
