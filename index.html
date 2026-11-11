@@ -1,7 +1,7 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="description" content="인공지능 기초 수행평가 참고 자료: 회귀, 분류, 군집 코드 모음"><title>AI 모델 구현 참고 자료</title><style>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="description" content="인공지능 기초 수행평가 참고 자료: 회귀, 분류, 군집 코드 모음"><title>[지속가능발전목표 프로젝트] 참고 자료</title><style>
 :root{--ink:#24314d;--muted:#71809a;--line:#e8edf6;--white:#fff;--bg:#f8faff;--accent:#6378db;--accent-light:#edf0ff;--shadow:0 12px 35px rgba(61,83,132,.07)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font-family: "Pretendard", "SUIT", "Apple SD Gothic Neo", "Malgun Gothic",system-ui,sans-serif;background:radial-gradient(circle at 6% 12%,#eaf1ff 0,transparent 24%),radial-gradient(circle at 97% 6%,#fff0f7 0,transparent 24%),#fafbff;line-height:1.6}button{font:inherit}.site{max-width:1020px;margin:0 auto;padding:0 22px 100px}.hero{position:relative;overflow:hidden;margin:30px 0 23px;padding:39px 43px 36px;border-radius:30px;border:1px solid #e9eafe;background:linear-gradient(120deg,#e7edff 0%,#f6f0ff 51%,#fff0f5 100%);box-shadow:var(--shadow)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;background:#fff9;border:1px solid #ffffffdf;border-radius:99px;color:#6876b6;font-size:12px;letter-spacing:.06em;font-weight:800}.eyebrow i{width:7px;height:7px;border-radius:50%;background:#8f91eb}.hero h1{font-size:clamp(27px,3.6vw,39px);letter-spacing:-.055em;line-height:1.3;margin:17px 0 11px}.hero p{margin:0;max-width:550px;font-size:14px;color:#667690;line-height:1.8}.hero-art{position:absolute;right:58px;top:36px;width:160px;height:150px;transform:rotate(-8deg);opacity:.83}.art-square{position:absolute;border-radius:18px;background:#ffffffb8;box-shadow:0 10px 22px #7585b324;border:1px solid #fff}.art-back{width:103px;height:112px;top:0;right:0;transform:rotate(15deg)}.art-front{width:108px;height:117px;top:25px;right:37px;padding:18px}.art-line{height:9px;border-radius:6px;margin-bottom:11px;background:#cbd6fb}.art-line:nth-child(2){width:69%;background:#e6c9e6}.art-line:nth-child(3){width:83%;background:#b9e7dd}.art-line:nth-child(4){width:58%;background:#cbd6fb}.art-dots{position:absolute;right:4px;top:18px;color:#b6a5e4;font-size:28px}.nav-wrap{position:sticky;top:0;z-index:5;background:#fafbffeb;backdrop-filter:blur(12px);padding:13px 0 12px}.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tab{cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #e4e9f4;border-radius:17px;padding:13px 12px;background:#fff;color:#687790;font-weight:800;font-size:16px;box-shadow:0 4px 14px #50648b07;transition:background .16s,transform .16s,border-color .16s}.tab:hover{transform:translateY(-1px);border-color:#ccd3f2}.tab[aria-selected=true]{color:#fff;background:#7286df;border-color:#7286df;box-shadow:0 7px 19px #7286df42}.tab[data-tab=cls][aria-selected=true]{background:#46af9c;border-color:#46af9c;box-shadow:0 7px 19px #46af9c36}.tab[data-tab=clu][aria-selected=true]{background:#b484cb;border-color:#b484cb;box-shadow:0 7px 19px #b484cb38}.tab:focus-visible{outline:3px solid #a8b9ff;outline-offset:3px}.tab-icon{width:28px;height:28px;display:inline-grid;place-items:center;border-radius:10px;font-size:14px;background:#eff2ff;color:#7e8ee1}.tab[aria-selected=true] .tab-icon{background:#ffffff35;color:#fff}.panel[hidden]{display:none!important}.section-intro{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:17px 3px 18px}.section-title{display:flex;align-items:center;gap:10px}.section-title h2{font-size:20px;letter-spacing:-.04em;margin:0}.section-title p{margin:0;font-size:13px;color:var(--muted)}.count{background:#fff;border:1px solid #e5eaf4;border-radius:99px;color:#7a86a0;padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap}.example{background:#fff;border:1px solid #e9ecf5;border-radius:24px;box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}.example-top{padding:26px 29px 22px;background:linear-gradient(96deg,#fff,#f9faff);border-bottom:1px solid #eef1f7}.topic-number{display:inline-grid;place-items:center;width:33px;height:33px;background:#edf1ff;color:#7181db;border-radius:12px;font-weight:900;font-size:13px;margin-right:8px}.category-cls .topic-number{background:#e5f8f2;color:#4baa95}.category-clu .topic-number{background:#f6eafd;color:#aa7fc1}.chip{display:inline-block;border:1px solid #e4e9fb;background:#f3f5ff;color:#6c7bd0;border-radius:100px;padding:4px 11px;font-size:12px;font-weight:800}.category-cls .chip{color:#389784;border-color:#d8f1e8;background:#f0fbf7}.category-clu .chip{color:#9f6db7;border-color:#f0e1f6;background:#fcf4ff}.example-top h3{font-size:22px;line-height:1.35;margin:13px 0 7px;letter-spacing:-.045em}.desc{margin:0;color:#78859b;font-size:14px}.steps{padding:9px 29px 21px}.step{position:relative;padding:17px 0 9px 20px;border-left:2px solid #edf0f8;margin-left:9px}.step:before{content:'';position:absolute;left:-6px;top:24px;width:10px;height:10px;border-radius:50%;background:#adbaef;box-shadow:0 0 0 4px #f0f3ff}.category-cls .step:before{background:#91d7c3;box-shadow:0 0 0 4px #ecf9f4}.category-clu .step:before{background:#d3b2e2;box-shadow:0 0 0 4px #fbf0ff}.step:last-of-type{border-left-color:transparent}.step-head{display:flex;align-items:center;gap:10px;margin:0 0 11px}.step-index{font-size:11px;color:#9aa7bd;font-weight:900;letter-spacing:.08em}.step h4{margin:0;font-size:15px;color:#3d4b66;letter-spacing:-.025em}.codebox{position:relative;background:#f8f9fd;border:1px solid #e9edf5;border-radius:14px;overflow-x:auto}.codebox pre{margin:0;padding:17px 20px;color:#34435c;font-size:12.8px;line-height:1.8;font-family:Consolas,"D2Coding","Noto Sans Mono","Liberation Mono",monospace;tab-size:4;white-space:pre;user-select:text}.codebox .c1,.codebox .cm{color:#8294a9;font-style:italic}.codebox .kn,.codebox .k,.codebox .ow,.codebox .kd{color:#8a63b3;font-weight:600}.codebox .s,.codebox .s1,.codebox .s2,.codebox .sa,.codebox .si{color:#b66f88}.codebox .mi,.codebox .mf{color:#3f94a7}.codebox .nf,.codebox .nb{color:#477cc3}.codebox .n{color:#34435c}.codebox .o{color:#7284a1}.tip{margin:18px 0 1px;padding:13px 15px;border-radius:12px;background:#f7f9ff;border:1px solid #e8eefb;color:#68758d;font-size:12.5px}.tip strong{color:#7c8bcc}.meta{font-size:11px;color:#a2acc0;margin-top:14px;overflow-wrap:anywhere}.footer{text-align:center;margin-top:31px;color:#a1abc1;font-size:12px}.footer:before{content:'✦';margin-right:7px;color:#b2b9e9}@media(max-width:700px){.site{padding:0 13px 65px}.hero{margin-top:12px;padding:28px 23px;border-radius:22px}.hero-art{display:none}.hero h1{font-size:27px}.hero p{font-size:13px}.tab{font-size:15px;padding:12px 7px;gap:6px}.tabs{gap:7px}.tab-icon{width:22px;height:22px;border-radius:7px}.example{border-radius:19px;margin-bottom:16px}.example-top{padding:20px 19px}.example-top h3{font-size:20px}.steps{padding:6px 15px 16px}.step{padding-left:13px}.codebox pre{font-size:12px;padding:13px}.section-title h2{font-size:18px}.section-title p{font-size:12px}}
 </style></head><body><div class="site">
-<header class="hero"><span class="eyebrow"><i></i> ARTIFICIAL INTELLIGENCE · CODE LIBRARY</span><h1>인공지능 모델 구현<br>참고 자료 <span aria-hidden="true">✦</span></h1><p>수행평가에서 필요한 코드를 찾아보세요.<br>회귀, 분류, 군집의 모델 구현 과정을 단계별로 정리했어요.</p><div class="hero-art" aria-hidden="true"><div class="art-square art-back"></div><div class="art-square art-front"><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div></div><div class="art-dots">✦</div></div></header>
+<header class="hero"><span class="eyebrow"><i></i> ARTIFICIAL INTELLIGENCE · CODE LIBRARY</span><h1>인공지능 모델 구현<br>참고 자료 <span aria-hidden="true">✦</span></h1><p>수행평가에서 필요한 코드를 찾아 활용해보세요.<br>회귀, 분류, 군집의 구현 코드가 제공됩니다.</p><div class="hero-art" aria-hidden="true"><div class="art-square art-back"></div><div class="art-square art-front"><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div><div class="art-line"></div></div><div class="art-dots">✦</div></div></header>
 <nav class="nav-wrap" aria-label="모델 카테고리"><div class="tabs" role="tablist">
 <button type="button" role="tab" class="tab" id="tab-reg" aria-controls="panel-reg" aria-selected="true" tabindex="0" data-tab="reg"><span class="tab-icon" aria-hidden="true">↗</span>회귀</button>
 <button type="button" role="tab" class="tab" id="tab-cls" aria-controls="panel-cls" aria-selected="false" tabindex="-1" data-tab="cls"><span class="tab-icon" aria-hidden="true">▦</span>분류</button>
@@ -9,13 +9,11 @@
 </div></nav><main>
 <section class="panel" id="panel-reg" role="tabpanel" aria-labelledby="tab-reg" ><div class="section-intro"><div class="section-title"><h2>회귀 모델</h2><p>· 위에서 아래 순서로 살펴보세요</p></div><span class="count">3개 예제</span></div>
 <article class="example category-reg"><div class="example-top"><span class="topic-number">01</span><span class="chip">선형 회귀 · X_train 사용</span><h3>펭귄 부리 길이 예측</h3><p class="desc">펭귄 데이터의 특성을 이용해 부리 길이를 예측합니다.</p></div><div class="steps">
-<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 불러오기 및 X, y 설정</h4></div><div class="codebox"><pre><code><span class="c1"># 데이터를 불러와 봅시다.</span>
+<section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>데이터 불러오기 및 X, y 설정</h4></div><div class="codebox"><pre><code><span class="c1"># 데이터 업로드.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;펭귄_데이터(처리전).csv&quot;</span><span class="p">)</span>
 
-<span class="n">df</span>
-
-<span class="c1"># 펭귄의 키와 날개길이, 몸무게를 활용하여 부리길이를 예측하도록 변수를 설정해 봅시다.</span>
+<span class="c1"># 펭귄의 키와 날개길이, 몸무게를 활용하여 부리길이를 예측하도록 변수 설정</span>
 
 <span class="c1"># 독립 변수</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">df</span> <span class="p">[[</span><span class="s1">&#39;키_m&#39;</span><span class="p">,</span> <span class="s1">&#39;날개길이_cm&#39;</span><span class="p">,</span> <span class="s1">&#39;몸무게_kg&#39;</span><span class="p">]]</span>
@@ -23,9 +21,7 @@
 <span class="c1"># 종속 변수</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;부리길이_cm&#39;</span><span class="p">]</span>
 </code></pre></div></section>
-<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>정규화</h4></div><div class="codebox"><pre><code><span class="c1"># 정규화를 진행해 봅시다.</span>
-
-<span class="c1"># 정규화에 필요한 기능 불러오기</span>
+<section class="step"><div class="step-head"><span class="step-index">STEP 02</span><h4>정규화</h4></div><div class="codebox"><pre><code><span class="c1"># 정규화에 필요한 기능 불러오기</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
 
 <span class="c1"># X 데이터를 배열 형태로 변환</span>
@@ -45,42 +41,35 @@
 <section class="step"><div class="step-head"><span class="step-index">STEP 03</span><h4>훈련·테스트 데이터 분리</h4></div><div class="codebox"><pre><code><span class="c1"># 테스트 나누기에 필요한 기능 불러오기</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
 
-<span class="c1"># 아래에 코드를 채워 봅시다.</span>
+<span class="c1"># 훈련 데이터와 테스트 데이터 분할</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">y</span><span class="p">,</span>
-    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># 60개의 데이터가 있을 때 테스트 데이터 18개</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
     <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
 <span class="p">)</span>
 
 <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 </code></pre></div></section>
-<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="c1"># 선형회귀 모델을 생성하고, 학습을 진행하는 코드를 작성해 봅시다.</span>
-
-<span class="c1"># 선형 회귀 모델 생성에 필요한 기능 불러오기</span>
+<section class="step"><div class="step-head"><span class="step-index">STEP 04</span><h4>모델 생성 및 학습</h4></div><div class="codebox"><pre><code><span class="c1"># 선형 회귀 모델 생성에 필요한 기능 불러오기</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
 
-<span class="c1"># 아래에 코드를 채워 봅시다.</span>
-<span class="c1"># 선형회귀 알고리즘으로 틀을 만듦</span>
+<span class="c1"># 선형회귀 알고리즘으로 선정</span>
 <span class="n">linear_model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
 
-<span class="c1"># 훈련 데이터를 통해서 실제 인공지능 모델을 학습시킴.</span>
+<span class="c1"># 훈련 데이터를 통하여 학습</span>
 <span class="n">linear_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </code></pre></div></section>
-<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>예측 및 성능 평가</h4></div><div class="codebox"><pre><code><span class="c1"># 모델을 이용하여 예측 결과를 출력하는 코드를 작성해 봅시다.</span>
+<section class="step"><div class="step-head"><span class="step-index">STEP 05</span><h4>예측 및 성능 평가</h4></div><div class="codebox"><pre><code><span class="n">linear_predict</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 
-<span class="n">linear_predict</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">linear_predict</span> <span class="c1"># 저장한 예측 결과 출력하기</span>
-
-<span class="c1"># 모델의 성능을 판단하는 함수 불러오기</span>
+<span class="c1"># 모델의 성능을 판단하는 함수</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
 
 <span class="c1"># 실제값과 예측값을 비교하여 결정 계수 구하기</span>
 <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">linear_predict</span><span class="p">)</span>
 </code></pre></div></section>
 <div class="tip"><strong>참고</strong> · 원본 수업 코드에서는 데이터 분리 전에 전체 X를 정규화합니다. 별도 테스트 성능을 엄밀히 평가할 때는 훈련 데이터에만 정규화 기준을 학습시키는 것이 좋습니다.</div>
-<div class="meta">자료 출처: 05_회귀_모델_구현_205.ipynb</div></div></article>
+<div class="meta">자료 출처: 05_회귀_모델_구현.ipynb</div></div></article>
 <article class="example category-reg"><div class="example-top"><span class="topic-number">02</span><span class="chip">선형 회귀 · X 전체 사용</span><h3>최저시급 예측</h3><p class="desc">연도와 최저시급 데이터를 사용하며 훈련·테스트 데이터를 나누지 않습니다.</p></div><div class="steps">
 <section class="step"><div class="step-head"><span class="step-index">STEP 01</span><h4>CSV 업로드 및 데이터 불러오기</h4></div><div class="codebox"><pre><code><span class="c1"># ① CSV 업로드 (코랩에서 실행)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
@@ -90,8 +79,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">file_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">uploaded</span><span class="p">))</span>  <span class="c1"># 업로드한 파일 이름</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1"># 파일 읽기~</span>
-<span class="n">df</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
 <span class="c1"># ③ 데이터 확인: 열 이름 / 데이터 개수 / 결측치</span>
 <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
